@@ -182,6 +182,28 @@ static bool fenced_code_comes_next(char *source_ptr)
     return false;
 }
 
+static bool quick_link_comes_next(char *source_ptr)
+{
+    if (source_ptr[0] != '<')
+    {
+	return false;
+    }
+
+    source_ptr += 1;
+
+    while (isgraph(*source_ptr) && *source_ptr != '>')
+    {
+	source_ptr++;
+    }
+
+    if (*source_ptr != '>')
+    {
+	return false;
+    }
+
+    return true;
+}
+
 static bool link_comes_next(char *source_ptr)
 {
     if (source_ptr[0] != '[')
@@ -317,7 +339,20 @@ static void compile_paragraph_line(string_view line, FILE *fout, bool *bold_text
     size_t index = 0;
     while (index < line.len)
     {
-	if (link_comes_next(line.str + index))
+	if (quick_link_comes_next(line.str + index))
+	{
+	    index += 1;
+
+	    size_t url_len = 0;
+	    while (line.str[index + url_len] != '>')
+	    {
+		url_len++;
+	    }
+
+	    string_view link_url = sv_substr(line, index, url_len);
+	    fprintf(fout, "<a href=\"%.*s\">%.*s</a>", (int)link_url.len, link_url.str, (int)link_url.len, link_url.str);
+	}
+	else if (link_comes_next(line.str + index))
 	{
 	    index += 1;
 
