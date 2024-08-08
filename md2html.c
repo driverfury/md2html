@@ -351,6 +351,8 @@ static void compile_paragraph_line(string_view line, FILE *fout, bool *bold_text
 
 	    string_view link_url = sv_substr(line, index, url_len);
 	    fprintf(fout, "<a href=\"%.*s\">%.*s</a>", (int)link_url.len, link_url.str, (int)link_url.len, link_url.str);
+
+	    index += url_len;
 	}
 	else if (link_comes_next(line.str + index))
 	{
