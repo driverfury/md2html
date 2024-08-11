@@ -670,7 +670,7 @@ static void compile_fenced_code(char **source_ptr, FILE *fout)
     {
 	fprintf(fout, " class=\"lang-%.*s\"", (int)language.len, language.str);
     }
-    fprintf(fout, ">\n");
+    fprintf(fout, ">");
 
     while (**source_ptr && !fenced_code_comes_next(*source_ptr))
     {
